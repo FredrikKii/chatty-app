@@ -6,25 +6,24 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Hantera inloggning (kan fyllas i senare för att skicka inloggningsförfrågan)
+  
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Här kommer logik för att skicka inloggningsdata
+  
     console.log('Logging in with:', username, password);
-    // Vid lyckad inloggning kan du navigera till huvudkanalsidan
-    // navigate('/channel');
+   
   };
 
-  // Hantera att fortsätta som gäst
+ 
   const continueAsGuest = () => {
     console.log('Continuing as Guest');
-    // Navigera till en gästvänlig sida, t.ex. en öppna kanaler
     navigate('/channels');
   };
 
   return (
     <div style={styles.container}>
-      <h1>Welcome to Chappy</h1>
+      <h1>This is cHAPPY!</h1>
+      <img src="frontend-src/assets/logo.webp" style={styles.img}></img>
       <form onSubmit={handleLogin} style={styles.form}>
         <input
           type="text"
@@ -58,6 +57,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
+    backgroundColor: '#c3d1d7'
   },
   form: {
     display: 'flex',
@@ -72,7 +72,7 @@ const styles = {
   button: {
     padding: '10px',
     fontSize: '16px',
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#50E3C2',
     color: 'white',
     border: 'none',
     cursor: 'pointer',
@@ -86,6 +86,11 @@ const styles = {
     border: '1px solid #ccc',
     cursor: 'pointer',
   },
+  img: {
+    width: "100px",
+    margin: "10px"
+  }
 };
+
 
 export default LoginPage;

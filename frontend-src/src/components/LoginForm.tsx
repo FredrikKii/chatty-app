@@ -20,7 +20,7 @@ const LoginForm = () => {
       }
 
       const data = await response.json();
-      console.log(data); // Spara token om inloggningen lyckas
+      console.log(data); 
     } catch (error) {
       console.error(error);
     }
