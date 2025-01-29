@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     try {
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,18 +21,27 @@ const LoginForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        throw new Error('Invalid username or password');
       }
 
       const data = await response.json();
-      console.log(data); 
+      console.log(data);
+
+      // Spara token i localStorage (eller sessionStorage) för framtida API-anrop
+      localStorage.setItem('token', data.token);
+
+      // Navigera till kanalsidan efter lyckad inloggning
+      navigate('/channels');
     } catch (error) {
-      console.error(error);
+      const err = error as Error;
+      setError(err.message);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
         value={username}

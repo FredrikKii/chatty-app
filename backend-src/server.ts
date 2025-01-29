@@ -2,6 +2,7 @@ import express from 'express';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import cors from 'cors'; 
+import jwt from 'jsonwebtoken';
 
 dotenv.config();
 
@@ -9,9 +10,11 @@ const app = express();
 const PORT = 4343;  
 
 const uri = process.env.CONNECTION_STRING;
+const SECRET_KEY = process.env.JWT_SECRET || 'your_secret_key';
 if (!uri) {
   throw new Error("CONNECTION_STRING is not defined in the environment variables.");
 }
+
 
 const client = new MongoClient(uri);
 
@@ -61,6 +64,41 @@ connectToDatabase().then(db => {
   });
 
 }).catch(console.error);
+
+/* Login */
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    /* TestUser */
+    if (username === 'Fredrik' && password === 'abc123') {
+      const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+      
+      res.json({ message: 'Login successful', token });
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+const verifyToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const token = req.headers['authorization'];
+
+  if (!token) {
+    return res.status(403).json({ message: 'No token provided' });
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    }
+    req.body.user = decoded;
+    next();
+  });
+};
 
 
 app.listen(PORT, () => {
